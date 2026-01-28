@@ -1,6 +1,50 @@
 #!/bin/bash
 
 # ===========================================
+# C/C++ POWER BUILDER v5.0
+# Comprehensive Build System with Incremental Compilation
+# Features: Multi-compiler, Animations, LTO, Sanitizers
+# ===========================================
+
+# Quick help
+if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+    cat << 'HELP'
+C/C++ Power Builder v5.0
+=========================
+
+Interactive build system for C/C++ projects with advanced features.
+
+USAGE:
+    ./build.sh              Run interactive menu
+    ./build.sh --help       Show this help
+    ./build.sh --version    Show version
+
+FEATURES:
+    • Single file and project compilation
+    • Incremental builds (10-100x faster rebuilds)
+    • Multi-compiler support (GCC/Clang)
+    • Multiple C/C++ standards
+    • LTO, sanitizers, optimizations
+    • 12 loading animations
+    • Compile time tracking
+    • Quick rebuild function
+
+REQUIREMENTS:
+    • gcc/g++ (or clang/clang++)
+    • Standard Unix tools (find, du, tput)
+    • Optional: bc (for precise timing)
+
+For more info, run the script and explore the menu!
+HELP
+    exit 0
+fi
+
+if [[ "$1" == "--version" || "$1" == "-v" ]]; then
+    echo "C/C++ Power Builder v5.0"
+    exit 0
+fi
+
+# ===========================================
 # SETUP & STYLES (tput)
 # ===========================================
 CONFIG_FILE="build_config.ini"
@@ -42,6 +86,12 @@ declare -a BLA_clock=( 0.2 🕛 🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 �
 declare -a BLA_braille=( 0.2 ⠁ ⠂ ⠄ ⡀ ⢀ ⠠ ⠐ ⠈ )
 declare -a BLA_dots=( 0.25 '⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏' )
 declare -a BLA_box=( 0.2 '◰' '◳' '◲' '◱' )
+
+# --- NEW ANIMATIONS ADDED HERE ---
+declare -a BLA_monkey=( 0.4 '🙈' '🙉' '🙊' '🙉' )
+declare -a BLA_pong=( 0.2 '▐⠂       ▌' '▐⠈       ▌' '▐ ⠂      ▌' '▐ ⠠      ▌' '▐  ⡀     ▌' '▐  ⠠     ▌' '▐   ⠂    ▌' '▐   ⠈    ▌' '▐    ⠂   ▌' '▐    ⠠   ▌' '▐     ⡀  ▌' '▐     ⠠  ▌' '▐      ⠂ ▌' '▐      ⠈ ▌' '▐       ⠂▌' '▐       ⠠▌' '▐       ⡀▌' '▐       ⠠▌' '▐       ⠂▌' '▐      ⠈ ▌' '▐      ⠂ ▌' '▐     ⠠  ▌' '▐     ⡀  ▌' '▐    ⠠   ▌' '▐    ⠂   ▌' '▐   ⠈    ▌' '▐   ⠂    ▌' '▐  ⠠     ▌' '▐  ⡀     ▌' '▐ ⠠      ▌' )
+declare -a BLA_metro=( 0.2 '[    ]' '[=   ]' '[==  ]' '[=== ]' '[ ===]' '[  ==]' '[   =]' '[    ]' )
+declare -a BLA_breathe=( 0.6 '  ()  ' ' (  ) ' '(    )' ' (  ) ' )
 
 BLA_loading_animation_pid=""
 
@@ -143,7 +193,7 @@ EOF
 }
 
 # ===========================================
-# 4. LOGGING & EXECUTION ENGINE
+# LOGGING & EXECUTION ENGINE
 # ===========================================
 # Safe time calculation with bc fallback
 calculate_time() {
@@ -164,7 +214,7 @@ add_time() {
     if $HAS_BC; then
         echo "$total + $add" | bc 2>/dev/null || echo "$total"
     else
-        # Fallback: integer addition
+        # FALLBACK: integer addition
         echo "$((${total%.*} + ${add%.*}))" 2>/dev/null || echo "$total"
     fi
 }
@@ -208,7 +258,7 @@ run_program() {
 }
 
 # ===========================================
-# REVAMPED BUILD FLAGS
+# ENHANCED BUILD FLAGS
 # ===========================================
 get_compiler_names() {
     local lang=$1  # "c" or "cpp"
@@ -653,7 +703,7 @@ draw_header() {
 
     clear
     echo "${B}${BOLD}================================================================${N}"
-    echo "${B}                C/C++ POWER BUILDER (v5.0)                      ${N}"
+    echo "${B}                C/C++ POWER BUILDER (v5.2)                      ${N}"
     echo "${B}================================================================${N}"
     echo "${C}${BOLD}ENVIRONMENT:${N}"
     echo "  ${UNDERLINE}OS:${N} $(uname -s)  |  ${UNDERLINE}COMPILER:${N} $COMPILER ($comp_name $ver)"
@@ -750,7 +800,7 @@ while true; do
             fi
             ;;
         7)
-            echo "1) Classic  2) Snake  3) Earth  4) Moon  5) Clock  6) Braille  7) Dots  8) Box"
+            echo "1)Classic 2)Snake 3)Earth 4)Moon 5)Clock 6)Braille 7)Dots 8)Box 9)Monkey 10)Pong 11)Metro 12)Breathe"
             read -p "Pick: " ap
             case $ap in
                 1) ANIM_STYLE="BLA_classic";;
@@ -761,6 +811,10 @@ while true; do
                 6) ANIM_STYLE="BLA_braille";;
                 7) ANIM_STYLE="BLA_dots";;
                 8) ANIM_STYLE="BLA_box";;
+                9) ANIM_STYLE="BLA_monkey";;
+                10) ANIM_STYLE="BLA_pong";;
+                11) ANIM_STYLE="BLA_metro";;
+                12) ANIM_STYLE="BLA_breathe";;
             esac
             save_config
             ;;
